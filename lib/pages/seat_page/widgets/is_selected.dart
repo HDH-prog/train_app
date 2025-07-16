@@ -5,7 +5,7 @@ class IsSelectedGuideWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center( 
+    return Center(
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 10),
         child: Row(
@@ -37,7 +37,7 @@ class IsSelectedGuideWidget extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 4),
-                const Text('선택 안됨'),
+                const Text('선택 안 됨'), // 수정됨
               ],
             ),
           ],

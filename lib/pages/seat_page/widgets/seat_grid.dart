@@ -1,15 +1,23 @@
 import 'package:flutter/material.dart';
 
 class SeatGrid extends StatelessWidget {
-  const SeatGrid({super.key});
+  final int? selectedRow;
+  final int? selectedCol;
+  final Function(int row, int col) onSeatTap;
+
+  const SeatGrid({
+    super.key,
+    required this.selectedRow,
+    required this.selectedCol,
+    required this.onSeatTap,
+  });
 
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-      itemCount: 21, // 헤더 포함 21줄
+      itemCount: 21, // header + 20 rows
       itemBuilder: (context, index) {
         if (index == 0) {
-          // 헤더 라벨
           return Padding(
             padding: const EdgeInsets.only(bottom: 8),
             child: Row(
@@ -17,7 +25,7 @@ class SeatGrid extends StatelessWidget {
               children: const [
                 SeatLabel('A'),
                 SeatLabel('B'),
-                SizedBox(width: 50), // 열번호 자리에 빈칸
+                SizedBox(width: 50),
                 SeatLabel('C'),
                 SeatLabel('D'),
               ],
@@ -25,38 +33,43 @@ class SeatGrid extends StatelessWidget {
           );
         }
 
-        int rowNum = index;
+        int rowNum = index - 1;
+
         return Padding(
           padding: const EdgeInsets.symmetric(vertical: 4),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              seatBox(),
-              seatBox(),
-              rowNumberBox(rowNum),
-              seatBox(),
-              seatBox(),
-            ],
+            children: List.generate(5, (colIndex) {
+              if (colIndex == 2) {
+                return rowNumberBox(rowNum + 1);
+              }
+
+              int realCol = colIndex > 2 ? colIndex - 1 : colIndex;
+              bool isSelected = selectedRow == rowNum && selectedCol == realCol;
+
+              return GestureDetector(
+                onTap: () => onSeatTap(rowNum, realCol),
+                child: seatBox(isSelected),
+              );
+            }),
           ),
         );
       },
     );
   }
 
-  // 회색 좌석 셀
-  Widget seatBox() {
+  Widget seatBox(bool isSelected) {
     return Container(
       width: 50,
       height: 50,
       margin: const EdgeInsets.symmetric(horizontal: 2),
       decoration: BoxDecoration(
-        color: Colors.grey[300],
+        color: isSelected ? Colors.purple : Colors.grey[300],
         borderRadius: BorderRadius.circular(6),
       ),
     );
   }
 
-  // 가운데 열 번호 셀 (배경 없음)
   Widget rowNumberBox(int number) {
     return Container(
       width: 50,
@@ -74,7 +87,6 @@ class SeatGrid extends StatelessWidget {
   }
 }
 
-// A, B, C, D 라벨
 class SeatLabel extends StatelessWidget {
   final String label;
   const SeatLabel(this.label, {super.key});

@@ -13,7 +13,32 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: const HomePage(),
+      initialRoute: '/',
+      onGenerateRoute: (settings) {
+        switch (settings.name) {
+          case '/':
+            return MaterialPageRoute(builder: (_) => const HomePage());
+
+          case '/station':
+            final args = settings.arguments as Map<String, dynamic>;
+            return MaterialPageRoute(
+              builder: (_) => StationListPage(
+                isDeparture: args['isDeparture'],
+                exclude: args['exclude'],
+              ),
+            );
+
+          case '/seat':
+            final args = settings.arguments as Map<String, String>;
+            return MaterialPageRoute(
+              builder: (_) => const SeatPage(),
+              settings: RouteSettings(arguments: args),
+            );
+
+          default:
+            return null;
+        }
+      },
     );
   }
 }
